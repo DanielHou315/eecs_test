@@ -2,10 +2,11 @@ import os
 import subprocess
 import shutil
 
-from .utils import SF
+from .utils import SF, log_debug
 from .test_case import TestCase
 
 class TestRunner:
+    DEBUG_ID = "Test Runner"
     def __init__(self, test_dir, cfg):
         self.test_dir = test_dir
         self.cfg = cfg
@@ -59,7 +60,7 @@ class TestRunner:
             if os.path.exists(correct_path):
                 status, diff_output = self.__compare_to_correct(output_path, correct_path)
             else:
-                status = "No.{i} {filename}: "+SF.yellow("Missing Output Reference")
+                status = "No.{i} {filename}: "+SF.yellow(f"Missing Output Reference {correct_path}")
                 self.missing_counter += 1
         return status, diff_output
 
@@ -113,6 +114,7 @@ class TestRunner:
   
 
 class SISOTests(TestRunner):
+    DEBUG_ID = "SISO Runner"
     def __init__(self, test_dir, cfg):
         super().__init__(test_dir, cfg)
         self.__generate_test_cases()
@@ -133,6 +135,8 @@ class SISOTests(TestRunner):
             # Build a TestCase instance
             test_name = os.path.splitext(os.path.basename(input_path[0]))[0]
             cmd = self.cfg.cmd_template.format(INPUT=input_path, OUTPUT=output_path)
+            if self.cfg.debug:
+                log_debug(self.DEBUG_ID, f"Built command\n- <<{cmd}>>\nfor {test_name}")
             test_case = TestCase(self.test_dir, test_name, cmd, output_path, correct_path)
             # Add command
             self.test_cases.append(test_case)
@@ -146,9 +150,12 @@ class SISOTests(TestRunner):
         output_filename = f"{base}.{self.cfg.output_ext}"
         output_path = os.path.join(self.output_dir, output_filename)
         correct_path = os.path.join(self.correct_dir, f"{output_filename}.correct")
+        if self.cfg.debug:
+            log_debug(self.DEBUG_ID, f"Test file {filename} corresponds to\n- OUT: {output_filename}\n- CORRECT: {correct_path}")
         return (input_path, output_path, correct_path)
 
 class MISOTests(TestRunner):
+    DEBUG_ID = "MISO Runner"
     def __init__(self, test_dir, cfg):
         super().__init__(test_dir, cfg)
         self.test_dir = test_dir
@@ -179,6 +186,8 @@ class MISOTests(TestRunner):
             # Build a TestCase instance
             test_name = os.path.splitext(os.path.basename(output_path))[0]
             cmd = self.cfg.cmd_template.format(INPUT=" ".join(input_path), OUTPUT=output_path)
+            if self.cfg.debug:
+                log_debug(self.DEBUG_ID, f"Built {test_name} command\n\t``{cmd}``")
             test_case = TestCase(self.test_dir, test_name, cmd, output_path, correct_path)
             # Add command
             self.test_cases.append(test_case)
@@ -195,4 +204,6 @@ class MISOTests(TestRunner):
         output_filename = f"{base}.{self.cfg.output_ext}"
         output_path = os.path.join(self.output_dir, output_filename)
         correct_path = os.path.join(self.correct_dir, f"{output_filename}.correct")
+        if self.cfg.debug:
+            log_debug(self.DEBUG_ID, f"Test folder ``{base}`` corresponds to\n\t- OUT: {output_filename}\n\t- CORRECT: {correct_path}")
         return (input_path, output_path, correct_path)

@@ -36,3 +36,6 @@ def exec_shell(*args):
                 sys.exit(10)
         return 0
     return _run_cmds
+
+def log_debug(identity, *args):
+    print(f"[DEBUG ({identity})]", *args)

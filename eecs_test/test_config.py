@@ -28,7 +28,9 @@ class TestConfig:
 
     # Hidden Properties
     __copy_to_correct__ = False
-
+    # Debugging properties
+    debug = False
+    
 class TestConfigMgr:
     cfg_dict = {}
     default_test = None
@@ -49,9 +51,10 @@ class TestConfigMgr:
         if key not in cls.cfg_dict.keys():
             raise TestConfigNotExistError()
         return cls.cfg_dict[key]
+        
 
-    @classmethod
-    def set_default(cls, key):
-        if not cls.exists(key):
-            raise TestConfigNotExistError()
-        cls.default_test = key
+    # @classmethod
+    # def set_default(cls, key):
+    #     if not cls.exists(key):
+    #         raise TestConfigNotExistError()
+    #     cls.default_test = key

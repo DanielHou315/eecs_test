@@ -1,9 +1,10 @@
 import os
 import argparse
 
-from .utils import SF
+from .utils import SF, log_debug
 from .test_config import TestConfigMgr
 from .test_case import TestCase
+
 
 class EECSTest:
     def __init__(self):
@@ -81,11 +82,15 @@ class EECSTest:
         if args.correct == True:
             self.__force_ack("Warning: overwriting existing Reference Solutions!")
             cfg.__copy_to_correct__ = True
+        elif cfg.debug:
+            log_debug("EECS Test", "Not copying answer as correct outputs")
 
         # Start testing
         print(SF.magenta(f"\n=== Starting {cfg.name} test ===\n"))
         TestCase.set_cfg(cfg)
         self.__run_cmd(cfg.pre_cmd)
+        if cfg.debug:
+            log_debug("EECS Test", "Pre-test command ran successfully")
 
         # For each test dir, run tests
         for test_dir in cfg.test_dirs:
@@ -99,11 +104,15 @@ class EECSTest:
             # Update counters
             c, i, m = runner.get_stats()
             self.__update_counters(c,i,m)
+            if cfg.debug:
+                log_debug("EECS Test", f"Test {test_name} returned c={c},i={i},m={m}")
 
             # Print the per-test result
             runner.dump_test_result()
 
         self.__dump_summary()
         self.__run_cmd(cfg.post_cmd)
+        if cfg.debug:
+            log_debug("EECS Test", f"Post-test command ran successfully")
 
         print("\n=== All tests processed ===")
