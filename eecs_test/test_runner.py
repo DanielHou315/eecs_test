@@ -8,7 +8,7 @@ from .test_case import TestCase
 class TestRunner:
     DEBUG_ID = "Test Runner"
     def __init__(self, test_dir, cfg):
-        self.test_dir = test_dir
+        self.test_dir = os.path.abspath(test_dir)
         self.cfg = cfg
         # Resset
         self.__reset()
@@ -133,7 +133,8 @@ class SISOTests(TestRunner):
                 continue
 
             # Build a TestCase instance
-            test_name = os.path.splitext(os.path.basename(input_path[0]))[0]
+            test_name = os.path.splitext(os.path.basename(input_path))[0]
+            # print(test_name, "from", input_path)
             cmd = self.cfg.cmd_template.format(INPUT=input_path, OUTPUT=output_path)
             if self.cfg.debug:
                 log_debug(self.DEBUG_ID, f"Built command\n- <<{cmd}>>\nfor {test_name}")
