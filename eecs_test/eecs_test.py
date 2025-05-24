@@ -51,19 +51,19 @@ class EECSTest:
         # print correct
         c_rate = (c/tot)*100
         if (c_rate >= 100.0):
-            print(f"- Correct: {SF.green(f"{c}/{tot} ({c_rate:.1f}%)")}")
+            print("- Correct:", SF.green(f"{c}/{tot} ({c_rate:.1f}%)"))
         else:
             print(f"- Correct: {c}/{tot} ({(c/tot)*100:.1f}%)")
         # Print errors
         i_rate = (i/tot)*100
         if (i_rate > 0.0):
-            print(f"- Inorrect: {SF.red(f"{i}/{tot} ({i_rate:.1f}%)")}")
+            print("- Inorrect:", SF.red(f"{i}/{tot} ({i_rate:.1f}%)"))
         else:
             print(f"- Inorrect: {i}/{tot} ({i_rate:.1f}%)")
         # Print Missing
         m_rate = m/tot*100
         if (m_rate > 0.0):
-            print(f"- Missing: {SF.yellow(f"{m}/{tot} ({m_rate:.1f}%)")}")
+            print("- Missing:", SF.yellow(f"{m}/{tot} ({m_rate:.1f}%)"))
         else:
             print(f"- Missing: {m}/{tot} ({m_rate:.1f}%)")
 
